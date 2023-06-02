@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jakarta.validation.Configuration;
 import jakarta.validation.ConstraintViolation;
@@ -139,6 +141,33 @@ public class ComptabiliteManagerImpl implements ComptabiliteManager {
 
         // TODO ===== RG_Compta_5 : Format et contenu de la référence
         // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+        String reference = pEcritureComptable.getReference();
+        String code = pEcritureComptable.getJournal().getCode();
+        int year = pEcritureComptable.getDate().getYear();
+
+        Pattern pattern = Pattern.compile("^([A-Za-z0-9]{1,5})-(\\d{4})/(\\d{5})$");
+        Matcher matcher = pattern.matcher(reference);
+
+        if (!matcher.matches()) {
+            throw new FunctionalException("Le format de la référence n'est pas valide.");
+        }
+
+        String referenceCode = matcher.group(1);
+        int referenceYear = Integer.parseInt(matcher.group(2));
+        String sequence = matcher.group(3);
+
+        if (!code.equals(referenceCode)) {
+            throw new FunctionalException("Le code journal dans la référence ne correspond pas au code journal de l'écriture comptable.");
+        }
+
+        if (year != referenceYear) {
+            throw new FunctionalException("L'année dans la référence ne correspond pas à la date de l'écriture comptable.");
+        }
+
+        String lastSequence = reference.substring(reference.lastIndexOf("/") + 1);
+        if (sequence.length() != lastSequence.length()) {
+            throw new FunctionalException("La longueur de la séquence dans la référence ne correspond pas à la longueur de la séquence dans l'écriture comptable.");
+        }
     }
 
 

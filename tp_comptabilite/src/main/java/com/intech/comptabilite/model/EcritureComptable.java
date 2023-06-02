@@ -1,5 +1,6 @@
 package com.intech.comptabilite.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,11 @@ public class EcritureComptable {
 	@NotNull
 	private JournalComptable journal;
 
-	@Pattern(regexp = "\\d{1,5}-\\d{4}/\\d{5}")
+	@Pattern(regexp = "[a-zA-Z0-9]{1,5}-\\d{4}/\\d{5}")
 	private String reference;
 
 	@NotNull
-	private Date date;
+	private LocalDate date;
 
 	@NotNull
 	@Size(min = 1, max = 200)
@@ -75,11 +76,11 @@ public class EcritureComptable {
 		reference = pReference;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
-	public void setDate(Date pDate) {
+	public void setDate(LocalDate pDate) {
 		date = pDate;
 	}
 
